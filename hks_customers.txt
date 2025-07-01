@@ -1,0 +1,91 @@
+"...since MW they use LuaJit as havok script is discontinued. IW's Lui library is very different from treyarch's."
+
+Havok Script customers:
+- Epic Mickey 2: The Power of Two (PS3, Wii, WiiU, Xbox360, PC Windows, PS Vita) CHECKED - WII
+- Destiny (Xbox360, Xbox One, PS3, PS4)
+- Fable Heroes (Xbox360)
+- Fable III (Xbox360, PC Windows)
+- Warhammer 40,000: Space Marine (Xbox360, PS3)
+- Starhawk (PS3)
+- Kingdoms of Amalur: Reckoning (Xbox360, PS3, PC Windows) CHECKED - XBOX360
+- The Elder Scrolls Online (PC, PS4, PS5, Xbox One, Xbox Series X/S)
+- Middle-earth: Shadow of Mordor (PC, PS4, Xbox One, PS3, Xbox360) CHECKED - PS3
+- LittleBigPlanet Karting (PS3) CHECKED - PS3
+
+008f929c possible header code in Starhawk ps3
+
+Studios:
+- Junction Point Studios (Epic Mickey 2 (Wii))
+- Heavy Iron Studios (Epic Mickey 2 (Wii U))
+- Blitz Games Studios (Epic Mickey 2 (PS3, X360, PC, Vita))
+- Lionhead Studios (Fable)
+- Relic Entertainment (Warhammer 40K Space Marine)
+- LightBox Interactive (Starhawk)
+- Bug Huge Games (Kingdoms)
+- Monolith Productions (Middle-earth)
+- United Front Games (LittleBigPlanet Karting)
+- San Diego Studio (LittleBigPlanet Karting)
+- Sega Studios Australia (London 2012)
+- NetDevil (?)
+- MastHead Studios
+
+
+Checked
+-------
+Call of Duty: Advanced Warfare (2014)
+Call of Duty: Black Ops II (2012)
+Call of Duty: Black Ops III (2015)
+Call of Duty: Ghosts (2013)
+Epic Mickey 2: The Power of Two (2012)
+Fable Heroes (2012)
+Fable III (Xbox360 2010, PC 2011)
+Guardians of Middle-earth (2012)
+Kinect NatGeo TV (2012)
+Kinect Sesame Street TV (2012)
+Kingdoms of Amalur: Reckoning (2012)
+LittleBigPlanet Karting (2012)
+London 2012 (2012)
+Middle-earth: Shadow or Mordor (2014)
+Sekiro: Shadows Die Twice (2019)
+Sid Meier's Civilization VI (2016)
+Starhawk (2012)
+The Elder Scrolls Online (2014)
+Warhammer 40,000: Space Marine (2011)
+Supreme Commander 2 (2010) (PC, X360, Max OS X)
+
+Unchecked
+-------
+Bloodborne (2015)
+Dark Souls III (2016)
+
+Maybe use HavokScript
+-------
+Middle-earth: Shadow of War (2017)
+LA Noire (May 2011, PS3, Xbox360, PC, Switch)
+Legend of Grimrock (April 2012 Windows)
+Heroes of Newerth (2010) (unlikely)
+Battlefield 4 (2013) (uses Havok)
+
+Saints Row: The Third (Nov 2011) (All platforms)
+Pokemon Mystery Dungeon: Gates to Infinity (Nov 2012) (Nintendo 3DS)
+Rift (March 2011) (PC Windows)
+The Secret World (Jul 2012) (PC Windows)
+UltraStar (May 2012) (PC)
+
+Do NOT use HavokScript
+-------
+Fable: The Journey (2012)
+Payday: The Heist (but it does use a modified Lua, as it has some extra opcodes, OP_TESTNIL and OP_TFORCALL)
+
+Lua users
+-------
+Dark Souls (2011)
+The Binding of Isaac (2011)
+Warhammer 40,000: Dawn of War (2004)
+Command: Modern Air/Naval Operations (2013)
+Cortex Command (2012)
+Don't Starve (2013)
+
+Maybe use Lua
+-------
+Fable II (2008)

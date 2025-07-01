@@ -1,0 +1,19 @@
+interesting things:
+
+__classData entry in metatables
+__readonly
+__meth
+
+
+
+
+metatable._AI_META -> index -1
+
+
+
+getAISubType:
+if the object is TUSERDATA, it gets the metatable for the object and compares it equal to the "_AI_META" entry in the registry. If they are equal, it is an 'ai' object, otherwise it is not. The subtype is found at offset 0x4 in the userdata block.
+
+If the object is TUI64, it calls hks::LuaState::GetEngineValue, and if it returns true, it returns the engine value stored in the fourth parameter.
+
+The actual value returned is actually an unsigned int that encodes the subtype in the 3 most significant bits. These bits are read as a number to deermine the ai subtype.

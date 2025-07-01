@@ -1,0 +1,34 @@
+onAssignmentStart
+- check for a valid LHS expression
+- if first time
+  - move the top expression to the LHS exp stack
+  - allocate an expression
+
+onAssignmentNextStart
+- allocate expression
+
+onAssignmentNextEnd
+- check for assignment conflicts
+- move the LHS expression to the LHS stack
+
+onAssignmentBodyStart - called once
+- push a new expression list-typing entry
+
+onAssignmentBodyEnd - called once
+- 
+
+assignments use an ExpListEntry, and since they call storeVariable for each one in the list, they can just pop the top item from the ExpListEntry's type mapping, and apply it to the newly created expression, so that it contains the necessary type info when storing the variable
+
+
+parseLocalDefinition:
+- onLocalDefStart
+- if typed
+  - onTypedLocalVariable
+- else
+  - onLocalDefined
+- if assigned
+  - onLocalDefAssignmentStart (then explist1)
+  - onLocalDefAssignmentEnd
+- else
+  - onLocalDefNoAssignment
+- onLocalDefEnd

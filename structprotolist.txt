@@ -1,0 +1,57 @@
+struct proto list
+Global state : offs 0x1d8 = hks::getMemoryNoHeader(s, 0x80, Alloc_Struct_Proto_List)
+Global state : offs 0x1e0 = (short)0   number used in proto list
+Global state : offs 0x1e2 = (short)16  size of proto list
+Global state : offs 0x1e8 = hks::HashTable::Create(s, 0, 16)  - table for searching structs by name
+
+
+Kingdoms
+(char)(numSlots / 3 << 2) + (char)numSlots + (char)(numSlots / 3) * -3 + '\x01';
+Civ6
+(char)((numSlots - numSlots / 7 >> 1) + numSlots / 7 >> 2) + '\x01' + (char)numSlots;
+
+
+Global state : offs 0x208 = static string cache
+
+"__mode"
+"__index"
+"__newindex"
+"__add"
+"__sub"
+"__mul"
+"__div"
+"__mod"
+"__pow"
+"__concat"
+"__len"
+"__unm"
+"__le"
+"__eq"
+"__lt"
+"__gc"
+"__call"
+"__viz"
+"__self"
+"arg"
+"n"
+"Error: Out of memory."
+"KoreInternal_GCFinalizerState"
+"__structmeta"
+"__structbacking"
+"__testdummy"
+"no value"
+"nil"
+"boolean"
+"userdata"
+"number"
+"string"
+"table"
+"function"
+"userdata"
+"thread"
+"function"
+"function"
+"ui64"
+"struct"
+"__isUsedForReffing"
+

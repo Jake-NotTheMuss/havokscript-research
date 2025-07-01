@@ -1,0 +1,168 @@
+Lua 5.1 Garbage Collection
+
+The atomic step is done after the mark phase is complete. This happens when the gray list has been competely processed. At this point, there are only black objects, white objects, and gray-again objects, which resulted from writes to black objects.
+
+`remarkupvalues'
+
+Concerning upvalues: they are never added to the gray list. They are marked gray if open, black if closed.
+
+For closed upvalues, if the upvalue is assigned a value, a write barrier takes effect, and the assigned value is marked.
+
+For open upvalues (gray), the upvalue's value must be remarked, as no write barrier exists for them, but they may have been changed since mark-propagation.
+
+`propagateall'
+
+There may be new values in the gray list since the mark-propagation, either from remarkupvalues, or from write barriers. Propagate those marks to clear the gray list.
+
+Now, you remark weak tables. Note that weak tables are kept gray, so there are no write barriers for weak tables. Therefore, the tables must be re-propgated to account for new assignments (if either keys or values are non-weak, otherwise they are just re-added to the weak list)
+
+The calling state is marked, obviously.
+
+The shared metatables are marked again, in case they have changed.
+
+Then `propagateall' again flushes the gray list.
+
+Then, the gray-again list is propagated.
+
+Then, any userdata objects which need to be finalized are kept in a list, to be run with their __gc method, before they are collected.
+
+Then, that list is processed, where each userdata is marked with `marktmu', and then `propagateall'.
+
+`cleartable' updates weak tables at values and keys which will be collected. For any objects which are only reachable through the weak table, they will be collected, so they must be removed from the table.
+
+Then, the current white is flipped to allow the sweeper to identify dead objects and distinguish them from any new allocations made between now and whenever the sweeper runs.
+
+
+
+
+the dead mask is now the current WHITE mask, so the WHITE mask is changed to otherwhite for new allcocations, so that those allocations won't be freed when sweeping.
+
+curr is not dead means: ((curr->gch.marked ^ WHITEBITS) & deadmask) != 0
+
+remember the dead mask is now the otherwhite at this point. Think: a non-dead object is either one that has been reached in the mark phase or a new allocation. a reachable object will be gray or black, so the white bits unset. Xoring that with the whitebits yields both white bits set, which guarantees nonzero result when ANDing with deadmask, which is one of the white bits.
+
+A fixed object is not meant to be collected, but it may not be reachable, so FIXEDBIT is also included in the white mask, and therefore in the deadmask.
+
+xor with WHITEBITS gives the otherwhite
+
+
+in luaC_freeall, currentwhite is set to (WHITEBITS | SFIXEDBIT).
+
+In this case, you want all objects to be considered dead. Think: a dead object CURR means (curr->gch.marked ^ WHITEBITS) & deadmask) == 0, and deadmask is otherwhite, which now is simply SFIXEDBIT.
+Every object that is not marked SFIXEDBIT will be considered dead. The main state will not be freed when sweeping, but every other object will. The main state will then be free explicitly before returning in lua_close.
+
+
+
+Havok Script Garbage Collection
+
+Function Analogs:
+hks::GarbageCollector::checkStep to luaC_checkGC
+- the main difference is in its usage: checkStep is called in the getMemory template function, whereas luaC_checkGC is called by the VM in various instructions such as OP_NEWTABLE or OP_CONCAT or OP_CLOSURE.
+
+In Lua, luaC_checkGC checks if the total memory usage is above a given threshold, and if so, invokes an Incremental Garbage Collection step with luaC_step();
+
+In Havok Script, checkStep is slightly more involved:
+
+hksSize occupied = m_memory->getOccupiedMemory();
+if (m_pauseTriggerMemoryUsage < occupied && m_stepTriggerCountdown <= 0 && !m_stopped) {
+	m_stepTriggerCountdown = 0x13d;
+	if (m_gcPolicy != NULL && (*m_gcPolicy)(m_mainState)) {
+		return;
+	}
+	m_stepsLeft = m_stepMultiplier * 0x13d * m_unit;
+	increment(callingState, GC_CALL_AUTOMATED, 0);
+}
+
+But the general idea is the same.
+
+hks::GarbageCollector::increment is most similar to singlestep
+
+
+
+In the mark phase, the main state is marked. It is marked as black, and propagated then and there, unlike in Lua, where it is just marked gray to start.
+
+It marks the name of the Lua state, the InternString. Marking an InternString is simply done by marking it black if it is not static (which is equivalent to FIXED in Lua, but only for strings, probably because FIXEDBIT is only used on strings in Lua).
+
+It then links the Lua state to the "StateStackList".
+
+TSTRING: -275   1976fe5
+TTABLE:  -133   1977073
+TFUNCTION: -13  19770eb
+TUSERDATA: -103  1977091
+TTHREAD:   -163  1977055
+TIFUNCTION: -73  19770af
+TCFUNCTION: -43  19770cd
+
+RBP + 64: (objType - 10)
+RBP + 60: (objType - 4)
+RBP + 58: (this)
+RBP + 4c: (objType)
+RBP + 48: (depthCount)
+RBP + 40: (prev)
+RBP + 38: (obj)
+RBP + 30: (this)
+
+rdi: this
+rsi: register type
+rdx: register value
+rcx: visitData
+r8: depthCount
+
+RBP + 10:
+RBP + d8: obj.value
+RBP + e0: obj.type
+RBP + e8: obj.value
+RBP + f0: obj.type
+RBP + 1e8: this
+RBP + 1f0: prev
+RBP + 1f8: depthCount
+RBP + 1fc: 
+RBP + 208: this
+markCClosure_extend(&obj, prev, depthCount);
+
+
+Visit Stack (AKA Resume Stack) is for keeping track of traversal when marking objects. The garbage collector may yield, in which case it saves the stack-linked-list of visit states to a persistent stack that will be safe after the longjmp.
+
+
+Table Rehash barriers enforce Table pointers to be saved in a Remark Stack, to be remarked along with grey-again objects in the Grey Stack.
+
+
+I assume the reason to have a separate stack for table rehash barriers is to save writing the type TTABLE to an HksObject array; you know the stack has tables, so you just save the Table *, while in the grey stack you save the whole object
+
+
+Safe Table Value is used to save a value that is to be stored in a table at a given key after a rehash. The values is saved before the rehash, than cleared after the rehash. Because the object may not be reachable during the rehash, it is saved to avoid possible collection.
+
+Barriers
+--------
+writeBarrierStringAccess is called by hks::StringTable::real_intern_inplace if the string to create already exists in the table. In the function, if the GC phase is 2, 3, or 4, and the string is not static, it is marked black to avoid possible collection.
+
+writeBarrier is called in several places. It takes a chunk header and an HksObject, named 'to' and 'from', respectively. If 'from' is collectible and 'to' is marked black, and 'from' is not a static string, if 'from' is not black, it is marked 'black, and if it is not a string, it is pushed to the grey stack. Thus, the grey stack will not contain any TSTRING objects.
+
+writeBarrier is only called if the current GC cycle is in phase 1
+
+checkDepth checks for an unsigned underflow in depthCount; if it is greater than the max depth, which is 200 in Black Ops 3, it has underflowed after decrementing 0, and yield is called.
+
+// guessing what the macros is called
+GC_PHASE_PAUSE,
+GC_PHASE_MARK,
+GC_PHASE_ATOMIC,
+GC_PHASE_FINALIZE,
+GC_PHASE_SWEEPSTRING,
+GC_PHASE_SWEEP,
+GC_PHASE_FINISHED
+
+Havok Script Garbage Collection phases:
+Phase 0: reset state stack lists and resume stack - cost: 0
+Phase 1 first time: mark main state and extend until cost limit is reached
+Phase 1 again: continue marking objects until cost limit is reached; finished once resume stack is empty
+	mark Grey stack and Remark stack - this marks grey-again objects
+	mark saved values
+	mark Lua Plus object list (if HKS_LUAPLUS is set)
+	mark state stacks
+	mark compiler methods
+	mark bytecode reader methods
+	mark bytecode reader struct hashtable
+	mark struct prototype names (InternString)
+	finished: set chunk color to BLACK: new allocations from here will not be collected this cycle
+Phase 2:
+

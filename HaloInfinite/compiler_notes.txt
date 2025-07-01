@@ -1,0 +1,22 @@
+(01)
+----
+lambda expressions can appear in the same way return statements can appear, for example:
+	|a;
+is a valid statement, equivalent to:
+	return a;
+----
+(02)
+----
+(parsePrefixExpression.png, onGlobalDefinition.png)
+the global keyword seems to do nothing
+typed global variables do not do anything either
+the type is advanced over
+----
+(03)
+----
+typed return values in functions do nothing
+the type name is advanced over
+----
+(04)
+----
+

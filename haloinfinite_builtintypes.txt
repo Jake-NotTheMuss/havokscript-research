@@ -1,0 +1,23 @@
+builtin types
+
+UI64 layout
+
+most significant 2 bytes: type id
+least significant 4 bytes: handle (-1 represents an invalid handle value)
+
+
+19
+81920 - e
+8192
+size??  0x34
+
+
+handle / 8192 * 52 + 4 + g_tag_instances->array
+
+g_tag_instances->array + 52 * (handle / 8192)
+g_tag_instances->array + 52 * (handle / 8192)
+
+
+
+&(this->m_curPrototype).m_slots[223].m_reserved + 0x1258
+0xa278 + 0x1258

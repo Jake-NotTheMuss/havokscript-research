@@ -1,0 +1,34 @@
+Havok Script, originally called KoreVM, is a discontinued, cross-platform, Lua-compatible scripting engine originally authored by Kore, and given the name KoreVM, and later acquired by Havok and rebranded to Havok Script.
+
+Available target platforms were Microsoft Windows, Xbox 360, Playstation 3, Nintendo Wii and Wii U, iOS.
+
+KoreVM was acquired by Havok in 2010. Havok renamed the product to "Havok Script", and employed a team of software engineers to assume further development of the software package. Havok has since discontinued the product, no longer providing support for it. Even after it was officially discontinued, game studios that had already purchased a license for the product would continue to use the package in their games.
+
+GAMES USING HAVOK SCRIPT
+Epic Mickey 2: The Power of Two
+Destiny
+Destiny 2
+Fable Heroes
+Fable III
+Warhammer 40,000: Space Marine
+Starhawk
+Kingdoms of Amalur: Reckoning
+The Elder Scrolls: Online
+Middle-Earth: Shadow of Mordor
+Middle-Earth: Shadow of War
+LittleBigPlanet Karting
+Call of Duty: Black Ops II
+Call of Duty: Ghosts
+Call of Duty: Advanced Warfare
+Call of Duty: Black Ops III
+Call of Duty: Infinite Warfare
+Call of Duty: World War II
+Call of Duty: Black Ops IIII
+Kinect NatGeo TV
+Kinect Sesame Street TV
+London 2012
+Sekiro: Shadows Die Twice
+Sid Meier's Civilization VI
+Sid Meier's Civilization: Beyond Earth
+Supreme Commander 2
+Dark Souls III

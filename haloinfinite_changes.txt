@@ -1,0 +1,50 @@
+prototype files
+---------------
+- begins with '-- object <type (hstructure) name>'
+- type name must be 63 characters or less (to fit in 64-char buffer)
+
+in the CodeGenerator, when entering an hstructure, a record is recorded, a structure of size 0x58,
+where the last 0x18 bytes is another structure
+
+flags:
+PREPROCESS = 1 << 0,
+PROTOTYPE_FILE = 1 << 1,
+DEBUG = 1 << 2,
+
+hmake constructors
+------------------
+
+0x480 - pre-constructor
+0x488 - post-constructor
+
+
+0x458 - on struct name / extend name
+0x460 - on proxytable enabled
+0x468 - on meta slot defined
+0x470 - on slot defined
+0x478 - on struct end
+
+0x490 - on typed global definition
+0x498 - on typed return value (empty function)
+
+3d0
+3f0
+3f8
+3d8
+
+modifications:
+in onStructName, it tries to look up the 'base' struct name, and if there is no result, it will emit an error, "Unrecognized base type '%s' for type '%s'"
+
+onStructSlot:
+	'tag' type is built into the code: there are semantic rules around it
+
+
+it seems function return types are purely for the programmer, as the compiler does not record what type is provided or generate any code for it
+
+added a new construct: lambda expressions:
+
+`[' ( param list ) `|' expression list `]'
+
+0x230 - start lambda expression
+0x238 - end lambda expression
+0x228 - empty lambda expression
