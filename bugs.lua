@@ -11,7 +11,7 @@ example = '\xFE\xFF', -- utf16 BOM
 description = [[
 hks::CompilerReader::getNext() increments the buffer position pointer every
 time it is called, even when the stream's state is STREAM_END and there are no
-more input bytes left. In the case of a source file that contains only a 
+more input bytes left. In the case of a source file that contains only a
 big-endian UTF16 byte order mark, the buffer position pointer will eventually
 point to potentially inaccessible/uninitialized memory, as it gets incremented
 past the end boundary of the buffer returned by the user lua_Reader function
@@ -59,13 +59,14 @@ brief = [[hksi_hksL_loadbuffer can dereference a NULL pointer]],
 culprit = [[hksi_hksL_loadbuffer]],
 description = [[
 The API hksi_hksL_loadbuffer has a parameter 'name' of type 'const char *'.
-This parameter is allowed to NULL, as the API will assign it a default value
-if it is. Before checking if it is NULL, it compares its value to another
-parameter 'buff', and if they compare unqual, it calculates the length of the
-string 'name', which triggers a segmentation fault if it is NULL.
+This parameter is allowed to be NULL, as the API will assign it a default
+value if it is. Before checking if it is NULL, it compares its value to
+another parameter 'buff', and if they compare unequal, it calculates the
+length of the string 'name', which triggers a segmentation fault if it is
+NULL.
 ]],
 fix = [[
-Check if 'name' is not NULL when comparing it to 'buff'
+Check if 'name' is not NULL when comparing it to 'buff'.
 ]]
 }
 
@@ -82,7 +83,7 @@ description = [[
 Error messages of the form "<token> expected near '<number>'", the close quote
 around <number> is not printed. These errors are generated in
 hks::SimpleCompilerState::signalError(). To build the error string, 4 strings
-are pushed to the stack and concatenated with hksc_lua_concat. The first
+are pushed to the stack and concatenated with hksi_lua_concat. The first
 string pushed is of the form <file>:<line>: <error>, where <error> is the
 '<token> expected' part of the error message. The second and fourth strings
 pushed are both literals, " near '" and "'" respectively. The third string is
@@ -101,7 +102,7 @@ string to the buffer, it pushes a null-byte to terminate the string, which
 increments the data length. Thus, the third string pushed for hksi_lua_concat
 contains an embedded null character, and when all 4 strings are concatenated,
 the resulting string, when processed as a C-string, will appear to end before
-the fourth string beginsm leaving out the final close quote.
+the fourth string begins, leaving out the final close quote.
 So an error message that is supposed to say
 "<name> expected near '1'" will actuall say
 "<name> expected naer '1", and the actual result of concatenation would be
@@ -128,10 +129,10 @@ description = [[
 When a function name has multiple parts, e.g. <name>.<field1>.<field2>...,
 and the length limit of 512 has been reached, if there is still another name
 part left to add, a '.' or ':' will be added to the buffer before checking if
-there is space left to right the next name part. A buffer overrun will occur
-if the function name is longer than 512 has at least one '.' or ':'.
+there is space left to write the next name part. A buffer overrun will occur
+if the function name is longer than 512 and has at least one '.' or ':'.
 ]],
-fix = [[Check if there is space in the buffer before adding '.' or ':']]
+fix = [[Check if there is space in the buffer before adding '.' or ':'.]]
 }
 
 Bug{
@@ -142,14 +143,14 @@ culprit = [[hks::CodeGenerator::buildFunctionName]],
 example = string.rep("t123456789", 52),
 description = [[
 If the built function name is 512 characters or longer, a null terminator will
-be written the position 511 of the buffer. Otherwise, the null terminator will
-be written the current position in the buffer. However, when calling
+be written to position 511 of the buffer. Otherwise, a null terminator will
+be written to the current position in the buffer. However, when calling
 hks::StringTable::internPinned(), the length passed to it is allowed to be
 exactly 512, but no more, meaning if the function name is 512 or longer, only
 the first 511 characters will be used, but the length will be 512, thus
 including the null terminator in the string.
 ]],
-fix = [[Pass a value of no more than 511 to internPinned()]]
+fix = [[Pass a length of no more than 511 to internPinned().]]
 }
 
 Bug{
@@ -165,9 +166,9 @@ the compiler will crash trying to access a NULL pointer. This happens because
 the dynamic vector containing the pending type constraints is not checked to
 make sure it has an element remaining. After all the type constraints are
 applied and removed, the remaining extra right-hand-side values will cause
-another access the the now empty type constraints array, which is now NULL,
+another access to the now empty type constraints array, which is now NULL,
 resulting in a segmentation fault after dereferencing a NULL pointer.
 ]],
 fix = [[Check if there are type constraints remaining before accessing the
-array]]
+array.]]
 }
